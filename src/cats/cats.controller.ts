@@ -9,14 +9,18 @@ import {
   Query,
   Req,
   Body,
+  UseGuards,
 } from '@nestjs/common';
 import { Request } from 'express';
+import { RolesGuard } from '../common/guards/roles.guard';
+import { Roles } from '../common/decorators/roles.decorator';
 import { CreateCatDto, UpdateCatDto, ListAllEntities } from './dto';
 import { CatsService } from './cats.service';
 import { Cat } from './interfaces/cat.interface';
 
 // e.g. `/cats`
 @Controller({ path: 'cats' })
+// @UseGuards(RolesGuard) // NOTE: ガードもコントローラ・メソッド・グローバルのいずれかにスコープ化できる
 export class CatsController {
   constructor(private catsService: CatsService) {}
 
@@ -80,6 +84,7 @@ export class CatsController {
   // NOTE: Postのシンプルサンプル
   //
   @Post() // e.g. `POST /cats`
+  @Roles('admin')
   create(@Body() createCatDto: CreateCatDto) {
     this.catsService.create(createCatDto);
     // return `This action adds a new cat (createCatDto: ${Object.values(
