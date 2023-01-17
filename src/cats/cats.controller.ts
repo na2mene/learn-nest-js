@@ -12,18 +12,26 @@ import {
 } from '@nestjs/common';
 import { Request } from 'express';
 import { CreateCatDto, UpdateCatDto, ListAllEntities } from './dto';
+import { CatsService } from './cats.service';
+import { Cat } from './interfaces/cat.interface';
 
 // e.g. `/cats`
 @Controller({ path: 'cats' })
 export class CatsController {
+  constructor(private catsService: CatsService) {}
+
   //
   // NOTE: index的な
   //
   @Get() // e.g. `/cats`
-  findAll(@Query() query: ListAllEntities): string {
-    const { page, limit } = query;
-    return `This action returns all cats (page: ${page}) (limit: ${limit} items)`;
+  async findAll(): Promise<Cat[]> {
+    return this.catsService.findAll();
   }
+  // @Get() // e.g. `/cats`
+  // findAll(@Query() query: ListAllEntities): string {
+  //   const { page, limit } = query;
+  //   return `This action returns all cats (page: ${page}) (limit: ${limit} items)`;
+  // }
 
   //
   // NOTE: パスを追加してみたサンプル
@@ -72,10 +80,11 @@ export class CatsController {
   // NOTE: Postのシンプルサンプル
   //
   @Post() // e.g. `POST /cats`
-  create(@Body() createCatDto: CreateCatDto): string {
-    return `This action adds a new cat (createCatDto: ${Object.values(
-      createCatDto,
-    )})`;
+  create(@Body() createCatDto: CreateCatDto) {
+    this.catsService.create(createCatDto);
+    // return `This action adds a new cat (createCatDto: ${Object.values(
+    //   createCatDto,
+    // )})`;
   }
 
   //
